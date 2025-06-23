@@ -1,7 +1,5 @@
 LoreCrafter - AI Worldbuilding Assistant
 
-It's highly recommended to take a screenshot of your running application, upload it to a site like Imgur, and replace the placeholder link above.
-
 LoreCrafter is a full-stack, AI-powered worldbuilding assistant designed for writers, game designers, and creatives. It helps users generate and manage structured lore for their fantasy or sci-fi universes, transforming high-level ideas into interconnected, visual, and manageable data.
 
 Features
