@@ -1,31 +1,17 @@
 services:
   - type: web
-    name: lorecrafter-api
+    name: lorecrafter
     runtime: python
-    repo: https://github.com/your-username/your-repo-name.git # <-- Make sure this is correct!
+    repo: https://github.com/your-username/your-repo-name.git
     branch: main
-    rootDir: .
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.4
-      - key: FRONTEND_URL
-        fromService:
-          type: static
-          name: lorecrafter-app
-          property: url
+      - key: FLASK_SECRET_KEY
+        generateValue: true
       - key: DATABASE_URL
         sync: false
       - key: OPENROUTER_API_KEY
         sync: false
-
-  - type: static
-    name: lorecrafter-app
-    repo: https://github.com/your-username/your-repo-name.git # <-- Make sure this is correct!
-    branch: main
-    rootDir: ./Frontend
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html

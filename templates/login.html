@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - LoreCrafter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quattrocento&display=swap" rel="stylesheet">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Quattrocento&display=swap');
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1c140f; /* Dark, earthy brown */
+            font-family: 'Quattrocento', serif;
+            color: #d7c8a0; /* Parchment text color */
+            overflow-x: hidden;
+        }
+
+        .section-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(ellipse at center, #2e231c 0%, #1c140f 100%);
+            overflow: hidden;
+        }
+        
+        .orb-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+        .orb-backdrop::before {
+            content: '';
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(110, 79, 75, 0.1) 0%, rgba(110, 79, 75, 0) 65%);
+            animation: pulse-orb 10s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+            border-radius: 50%;
+        }
+
+        @keyframes pulse-orb {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.7; }
+        }
+        
+        .welcome-section .logo-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .ei-title-final {
+            font-family: 'Cinzel', serif;
+            font-size: 8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #d7c8a0, #a1887f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0px 0px 15px rgba(215, 200, 160, 0.3);
+        }
+
+        .title-sparkle {
+            width: 50px;
+            height: 50px;
+            color: #d7c8a0;
+            filter: drop-shadow(0 0 15px #d7c8a0);
+            animation: sparkle-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes sparkle-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.15); opacity: 0.8; }
+        }
+        
+        .subtitle-container p {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #d7c8a0;
+            font-style: italic;
+            text-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
+        }
+        
+        .echo-text span, .subtitle-text span {
+            display: inline-block;
+            opacity: 0; /* GSAP controlled */
+            transform: translateY(20px); /* GSAP controlled */
+        }
+
+        #welcome-content { position: relative; z-index: 3; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        #scroll-down-prompt { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 4; opacity: 0; cursor: pointer; pointer-events: auto; }
+        #scroll-down-prompt .chevron { display: block; width: 28px; height: 28px; border-bottom: 2px solid #d7c8a0; border-right: 2px solid #d7c8a0; transform: rotate(45deg); margin: -10px auto; animation: bounce 2s infinite; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+            40% { transform: translateY(-20px) rotate(45deg); }
+            60% { transform: translateY(-10px) rotate(45deg); }
+        }
+        
+        .auth-section-layout { display: grid; grid-template-columns: 1fr 1fr; align-items: center; width: 100%; max-width: 1200px; padding: 2rem; gap: 2rem; }
+        .auth-prompt-panel { padding: 2rem; text-align: left; position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; }
+        .prompt-image { width: 100%; max-width: 450px; height: 300px; margin-bottom: 2rem; border-radius: 1rem; box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); object-fit: cover; transition: opacity 1s ease-in-out; border: 2px solid #d7c8a0; }
+        .prompt-text-container h3 { font-family: 'Cinzel', serif; font-size: 2rem; color: #d7c8a0; margin-bottom: 1rem; }
+        .prompt-text-container p { font-family: 'Quattrocento', serif; font-size: 1.1rem; color: #bcaaa4; min-height: 100px; }
+        .auth-form-panel { display: flex; justify-content: center; align-items: center; }
+        .form-container { width: 100%; max-width: 450px; background-color: rgba(30, 20, 15, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(215, 200, 160, 0.2); border-radius: 1rem; padding: 2.5rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+
+        .form-container input {
+            transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
+            font-family: 'Quattrocento', serif;
+            background-color: #2e231c;
+            border: 1px solid #5d4037;
+            color: #d7c8a0;
+        }
+        .form-container input:focus {
+            border-color: #d7c8a0;
+            box-shadow: 0 0 20px rgba(215, 200, 160, 0.3);
+            outline: none;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #5d4037;
+            color: #fdf6e3;
+            border-radius: 0.5rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover { background-color: #795548; }
+
+        /* --- RESPONSIVENESS --- */
+        @media (max-width: 900px) {
+            .auth-section-layout { grid-template-columns: 1fr; }
+            .auth-prompt-panel { display: none; }
+            .welcome-section .ei-title-final { font-size: 6rem; }
+            .title-sparkle { width: 40px; height: 40px; }
+            .orb-backdrop::before { width: 400px; height: 400px; }
+        }
+        
+        @media (max-width: 480px) {
+            .welcome-section .ei-title-final { font-size: 4.5rem; }
+            .subtitle-container p { font-size: 18px; }
+            .form-container { padding: 2rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <section id="welcome" class="section-container welcome-section">
+        <div class="orb-backdrop"></div>
+        <div id="welcome-content">
+            <div id="title" class="logo-section">
+                <svg class="title-sparkle" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L9.19 8.63L2 11.25L7.45 16.34L6.24 23L12 19.18L17.76 23L16.54 16.34L22 11.25L14.81 8.63L12 2Z"/>
+                </svg>
+                <h1 class="ei-title-final">LoreCrafter</h1>
+            </div>
+            <div class="subtitle-container">
+                <p id="echo" class="echo-text"></p>
+                <p id="subtitle" class="subtitle-text"></p>
+            </div>
+        </div>
+        <a id="scroll-down-prompt" href="#auth-forms">
+            <span class="chevron"></span>
+        </a>
+    </section>
+
+    <section id="auth-forms" class="section-container">
+        <div class="auth-section-layout">
+            <div class="auth-prompt-panel">
+                 <img id="prompt-image" class="prompt-image" src="https://i.imgur.com/gD5A8H5.jpeg" alt="Dynamic prompt image">
+                <div class="prompt-text-container">
+                    <h3 id="prompt-heading">Craft Your Saga</h3>
+                    <p id="prompt-fact">From sprawling empires on ancient maps to the intricate backstories of their heroes, every detail contributes to a living, breathing world.</p>
+                </div>
+            </div>
+            <div class="auth-form-panel">
+                <div id="login-container" class="form-container">
+                    <h2 class="text-3xl font-bold text-center text-[#d7c8a0] mb-6 font-cinzel">Welcome, Chronicler</h2>
+                    <form id="login-form">
+                        <div class="mb-4">
+                            <label for="login-email" class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                            <input type="email" id="login-email" name="email" required class="w-full p-3 rounded-lg">
+                        </div>
+                        <div class="mb-6">
+                            <label for="login-password" class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                            <input type="password" id="login-password" name="password" required class="w-full p-3 rounded-lg">
+                        </div>
+                        <p id="login-error-message" class="text-red-400 text-sm mb-4 text-center hidden"></p>
+                        <button type="submit" class="btn-primary">Enter the Archives</button>
+                    </form>
+                    <p class="text-center text-gray-400 mt-6 text-sm">
+                        No history here? <a href="#" id="show-register" class="text-[#d7c8a0] hover:underline">Begin your tale</a>.
+                    </p>
+                </div>
+                <div id="register-container" class="form-container hidden">
+                    <h2 class="text-3xl font-bold text-center text-[#d7c8a0] mb-6 font-cinzel">Scribe Your Name</h2>
+                    <form id="register-form">
+                        <div class="mb-4">
+                            <label for="register-username" class="block text-sm font-medium text-gray-400 mb-2">Username</label>
+                            <input type="text" id="register-username" name="username" required class="w-full p-3 rounded-lg">
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-email" class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                            <input type="email" id="register-email" name="email" required class="w-full p-3 rounded-lg">
+                        </div>
+                        <div class="mb-4">
+                            <label for="register-password" class="block text-sm font-medium text-gray-400 mb-2">Password</label>
+                            <input type="password" id="register-password" name="password" required class="w-full p-3 rounded-lg">
+                        </div>
+                        <p id="register-error-message" class="text-red-400 text-sm mb-4 text-center hidden"></p>
+                        <p id="register-success-message" class="text-green-400 text-sm mb-4 text-center hidden"></p>
+                        <button type="submit" class="btn-primary">Create Account</button>
+                    </form>
+                     <p class="text-center text-gray-400 mt-6 text-sm">
+                        Already have a history? <a href="#" id="show-login" class="text-[#d7c8a0] hover:underline">Return to the Archives</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // CORRECTED: The API_BASE_URL is now a relative path ('').
+            // This allows the frontend to send API requests to the same server that
+            // served the webpage, which works for both local development and deployed
+            // environments without needing to change the code.
+            const API_BASE_URL = '';
+
+            // --- GSAP Animations ---
+            function setupSubtitleAnimation(elementId, text) {
+                const element = document.getElementById(elementId);
+                if (!element) return;
+                element.innerHTML = text.split(' ').map(word => `<span>${word}&nbsp;</span>`).join('');
+                return element.children;
+            }
+            
+            const echoWords = setupSubtitleAnimation('echo', 'A world from a word.');
+            const subtitleWords = setupSubtitleAnimation('subtitle', 'Your saga awaits.');
+
+            const tl = gsap.timeline();
+            tl.to("#title", { opacity: 1, scale: 1, duration: 1.5, ease: "power2.out" }, 0.5)
+              .to(echoWords, { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: "power3.out" }, 1.5)
+              .to(subtitleWords, { opacity: 1, y: 0, duration: 0.8, stagger: 0.2, ease: "power3.out" }, 2.5)
+              .to("#scroll-down-prompt", { opacity: 1, duration: 1.5, ease: "power2.in" }, 4);
+
+            // --- Form Switching Logic ---
+            const prompts = [
+                { heading: "Craft Your Saga", fact: "From sprawling empires on ancient maps to the intricate backstories of their heroes, every detail contributes to a living, breathing world.", image: "static/assets/one.jpg" },
+                { heading: "Generate Instantly", fact: "Describe a concept, and let the AI assistant forge detailed characters and locations, complete with rich histories and personalities.", image: "static/assets/two.jpg" },
+                { heading: "Visualize Connections", fact: "The World Graph automatically links characters to their homes, allies, and rivals, revealing the web of relationships in your creation.", image: "static/assets/three.jpg" }
+            ];
+            const promptHeading = document.getElementById('prompt-heading');
+            const promptFact = document.getElementById('prompt-fact');
+            const promptImage = document.getElementById('prompt-image');
+            let currentPrompt = 0;
+            function updatePrompt() {
+                if (!promptHeading || !promptFact || !promptImage) return;
+                gsap.to([promptHeading, promptFact, promptImage], { opacity: 0, duration: 0.5, onComplete: () => {
+                    promptHeading.textContent = prompts[currentPrompt].heading;
+                    promptFact.textContent = prompts[currentPrompt].fact;
+                    promptImage.src = prompts[currentPrompt].image;
+                    gsap.to([promptHeading, promptFact, promptImage], { opacity: 1, duration: 0.5 });
+                    currentPrompt = (currentPrompt + 1) % prompts.length;
+                }});
+            }
+            setInterval(updatePrompt, 6000);
+            updatePrompt();
+            
+            const loginContainer = document.getElementById('login-container');
+            const registerContainer = document.getElementById('register-container');
+            const showRegisterBtn = document.getElementById('show-register');
+            const showLoginBtn = document.getElementById('show-login');
+
+            showRegisterBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                gsap.to(loginContainer, { opacity: 0, duration: 0.3, onComplete: () => {
+                    loginContainer.classList.add('hidden');
+                    registerContainer.classList.remove('hidden');
+                    gsap.fromTo(registerContainer, {opacity: 0}, {opacity: 1, duration: 0.3});
+                }});
+            });
+
+            showLoginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                gsap.to(registerContainer, { opacity: 0, duration: 0.3, onComplete: () => {
+                    registerContainer.classList.add('hidden');
+                    loginContainer.classList.remove('hidden');
+                    gsap.fromTo(loginContainer, {opacity: 0}, {opacity: 1, duration: 0.3});
+                }});
+            });
+            
+            // --- Form Submission Logic ---
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const loginErrorEl = document.getElementById('login-error-message');
+            const registerErrorEl = document.getElementById('register-error-message');
+            const registerSuccessEl = document.getElementById('register-success-message');
+
+            const displayMessage = (element, message) => { if (element) { element.textContent = message; element.classList.remove('hidden'); } };
+            const hideMessages = () => {
+                if(loginErrorEl) loginErrorEl.classList.add('hidden');
+                if(registerErrorEl) registerErrorEl.classList.add('hidden');
+                if(registerSuccessEl) registerSuccessEl.classList.add('hidden');
+            }
+
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    hideMessages();
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/api/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            // Redirect to the URL provided by the backend, which will be the main dashboard.
+                            window.location.href = data.redirect_url;
+                        } else {
+                            displayMessage(loginErrorEl, data.error || 'An unknown error occurred.');
+                        }
+                    } catch (error) {
+                        displayMessage(loginErrorEl, 'Could not connect to the server.');
+                    }
+                });
+            }
+
+            if (registerForm) {
+                registerForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    hideMessages();
+                    const username = document.getElementById('register-username').value;
+                    const email = document.getElementById('register-email').value;
+                    const password = document.getElementById('register-password').value;
+
+                    if (password.length < 6) {
+                        displayMessage(registerErrorEl, 'Password must be at least 6 characters long.');
+                        return;
+                    }
+
+                    try {
+                         const response = await fetch(`${API_BASE_URL}/api/register`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username, email, password })
+                        });
+
+                        const data = await response.json();
+
+                        if(response.ok) {
+                            displayMessage(registerSuccessEl, 'Registration successful! Please log in.');
+                            registerForm.reset();
+                            // Automatically switch back to the login form after a successful registration.
+                            setTimeout(() => showLoginBtn.click(), 2000);
+                        } else {
+                            displayMessage(registerErrorEl, data.error || 'Registration failed.');
+                        }
+                    } catch (error) {
+                        displayMessage(registerErrorEl, 'Could not connect to the server.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
